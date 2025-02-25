@@ -7,19 +7,23 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-async def get_search_results(query: str, retriever: Any, query_domains: List[str] = None) -> List[Dict[str, Any]]:
+
+async def get_search_results(
+    query: str, retriever: Any, query_domains: List[str] = None
+) -> List[Dict[str, Any]]:
     """
     Get web search results for a given query.
-    
+
     Args:
         query: The search query
         retriever: The retriever instance
-    
+
     Returns:
         A list of search results
     """
     search_retriever = retriever(query, query_domains=query_domains)
     return search_retriever.search()
+
 
 async def generate_sub_queries(
     query: str,
@@ -27,11 +31,11 @@ async def generate_sub_queries(
     report_type: str,
     context: List[Dict[str, Any]],
     cfg: Config,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> List[str]:
     """
     Generate sub-queries using the specified LLM model.
-    
+
     Args:
         query: The original query
         parent_query: The parent query
@@ -40,7 +44,7 @@ async def generate_sub_queries(
         context: Search results context
         cfg: Configuration object
         cost_callback: Callback for cost calculation
-    
+
     Returns:
         A list of sub-queries
     """
@@ -49,7 +53,7 @@ async def generate_sub_queries(
         parent_query,
         report_type,
         max_iterations=cfg.max_iterations or 3,
-        context=context
+        context=context,
     )
 
     try:
@@ -64,8 +68,10 @@ async def generate_sub_queries(
             cost_callback=cost_callback,
         )
     except Exception as e:
-        logger.warning(f"Error with strategic LLM: {e}. Retrying with max_tokens={cfg.strategic_token_limit}.")
-        logger.warning(f"See https://github.com/assafelovic/gpt-researcher/issues/1022")
+        logger.warning(
+            f"Error with strategic LLM: {e}. Retrying with max_tokens={cfg.strategic_token_limit}."
+        )
+        logger.warning("See https://github.com/assafelovic/gpt-researcher/issues/1022")
         try:
             response = await create_chat_completion(
                 model=cfg.strategic_llm_model,
@@ -76,9 +82,13 @@ async def generate_sub_queries(
                 llm_kwargs=cfg.llm_kwargs,
                 cost_callback=cost_callback,
             )
-            logger.warning(f"Retrying with max_tokens={cfg.strategic_token_limit} successful.")
+            logger.warning(
+                f"Retrying with max_tokens={cfg.strategic_token_limit} successful."
+            )
         except Exception as e:
-            logger.warning(f"Retrying with max_tokens={cfg.strategic_token_limit} failed.")
+            logger.warning(
+                f"Retrying with max_tokens={cfg.strategic_token_limit} failed."
+            )
             logger.warning(f"Error with strategic LLM: {e}. Falling back to smart LLM.")
             response = await create_chat_completion(
                 model=cfg.smart_llm_model,
@@ -92,6 +102,7 @@ async def generate_sub_queries(
 
     return json_repair.loads(response)
 
+
 async def plan_research_outline(
     query: str,
     search_results: List[Dict[str, Any]],
@@ -103,7 +114,7 @@ async def plan_research_outline(
 ) -> List[str]:
     """
     Plan the research outline by generating sub-queries.
-    
+
     Args:
         query: Original query
         retriever: Retriever instance
@@ -112,18 +123,13 @@ async def plan_research_outline(
         parent_query: Parent query
         report_type: Report type
         cost_callback: Callback for cost calculation
-    
+
     Returns:
         A list of sub-queries
     """
-    
+
     sub_queries = await generate_sub_queries(
-        query,
-        parent_query,
-        report_type,
-        search_results,
-        cfg,
-        cost_callback
+        query, parent_query, report_type, search_results, cfg, cost_callback
     )
 
     return sub_queries

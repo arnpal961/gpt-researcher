@@ -4,6 +4,7 @@ import json_repair
 from ..utils.llm import create_chat_completion
 from ..prompts import auto_agent_instructions
 
+
 async def choose_agent(
     query, cfg, parent_query=None, cost_callback: callable = None, headers=None
 ):
@@ -40,6 +41,7 @@ async def choose_agent(
         return agent_dict["server"], agent_dict["agent_role_prompt"]
 
     except Exception as e:
+        print(f"Error in choose_agent: {e}")
         return await handle_json_error(response)
 
 

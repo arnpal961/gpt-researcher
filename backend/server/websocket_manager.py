@@ -36,7 +36,7 @@ class WebSocketManager:
                         await websocket.send_text("pong")
                     else:
                         await websocket.send_text(message)
-                except:
+                except Exception:
                     break
             else:
                 break

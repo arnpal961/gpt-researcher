@@ -21,6 +21,8 @@ async def main(task: str):
     # Run research with progress tracking
     print("Starting deep research...")
     context = await researcher.conduct_research(on_progress=on_progress)
+    print("\nContext:")
+    print(context)
     print("\nResearch completed. Generating report...")
 
     # Generate the final report

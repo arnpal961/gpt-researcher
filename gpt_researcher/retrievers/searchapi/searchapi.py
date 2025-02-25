@@ -27,7 +27,7 @@ class SearchApiSearch():
         """
         try:
             api_key = os.environ["SEARCHAPI_API_KEY"]
-        except:
+        except KeyError:
             raise Exception("SearchApi key not found. Please set the SEARCHAPI_API_KEY environment variable. "
                             "You can get a key at https://www.searchapi.io/")
         return api_key
@@ -40,7 +40,6 @@ class SearchApiSearch():
         """
         print("SearchApiSearch: Searching with query {0}...".format(self.query))
         """Useful for general internet search queries using SearchApi."""
-
 
         url = "https://www.searchapi.io/api/v1/search"
         params = {

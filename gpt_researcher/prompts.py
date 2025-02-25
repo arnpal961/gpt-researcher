@@ -31,12 +31,16 @@ def generate_search_queries_prompt(
     else:
         task = question
 
-    context_prompt = f"""
+    context_prompt = (
+        f"""
 You are a seasoned research assistant tasked with generating search queries to find relevant information for the following task: "{task}".
 Context: {context}
 
 Use this context to inform and refine your search queries. The context provides real-time web information that can help you generate more specific and relevant queries. Consider any current events, recent developments, or specific details mentioned in the context that could enhance the search queries.
-""" if context else ""
+"""
+        if context
+        else ""
+    )
 
     dynamic_example = ", ".join([f'"query {i+1}"' for i in range(max_iterations)])
 
@@ -67,15 +71,15 @@ def generate_report_prompt(
 
     reference_prompt = ""
     if report_source == ReportSource.Web.value:
-        reference_prompt = f"""
+        reference_prompt = """
 You MUST write all used source urls at the end of the report as references, and make sure to not add duplicated sources, but only one reference for each.
 Every url should be hyperlinked: [url website](url)
-Additionally, you MUST include hyperlinks to the relevant URLs wherever they are referenced in the report: 
+Additionally, you MUST include hyperlinks to the relevant URLs wherever they are referenced in the report:
 
 eg: Author, A. A. (Year, Month Date). Title of web page. Website Name. [url website](url)
 """
     else:
-        reference_prompt = f"""
+        reference_prompt = """
 You MUST write all used source document names at the end of the report as references, and make sure to not add duplicated sources, but only one reference for each."
 """
 
@@ -85,7 +89,7 @@ You MUST write all used source document names at the end of the report as refere
 Information: "{context}"
 ---
 Using the above information, answer the following query or task: "{question}" in a detailed report --
-The report should focus on the answer to the query, should be well structured, informative, 
+The report should focus on the answer to the query, should be well structured, informative,
 in-depth, and comprehensive, with facts and numbers if available and at least {total_words} words.
 You should strive to write the report as long as you can using all relevant and necessary information provided.
 
@@ -104,8 +108,9 @@ Please do your best, this is very important to my career.
 Assume that the current date is {date.today()}.
 """
 
+
 def curate_sources(query, sources, max_results=10):
-    return f"""Your goal is to evaluate and curate the provided scraped content for the research task: "{query}" 
+    return f"""Your goal is to evaluate and curate the provided scraped content for the research task: "{query}"
     while prioritizing the inclusion of relevant and high-quality information, especially sources containing statistics, numbers, or concrete data.
 
 The final curated list will be used as context for creating a research report, so prioritize:
@@ -138,10 +143,14 @@ The response MUST not contain any markdown format or additional text (like ```js
 """
 
 
-
-
 def generate_resource_report_prompt(
-    question, context, report_source: str, report_format="apa", tone=None, total_words=1000, language=None
+    question,
+    context,
+    report_source: str,
+    report_format="apa",
+    tone=None,
+    total_words=1000,
+    language=None,
 ):
     """Generates the resource report prompt for the given question and research summary.
 
@@ -155,12 +164,12 @@ def generate_resource_report_prompt(
 
     reference_prompt = ""
     if report_source == ReportSource.Web.value:
-        reference_prompt = f"""
+        reference_prompt = """
             You MUST include all relevant source urls.
             Every url should be hyperlinked: [url website](url)
             """
     else:
-        reference_prompt = f"""
+        reference_prompt = """
             You MUST write all used source document names at the end of the report as references, and make sure to not add duplicated sources, but only one reference for each."
         """
 
@@ -179,13 +188,25 @@ def generate_resource_report_prompt(
 
 
 def generate_custom_report_prompt(
-    query_prompt, context, report_source: str, report_format="apa", tone=None, total_words=1000, language: str = "english"
+    query_prompt,
+    context,
+    report_source: str,
+    report_format="apa",
+    tone=None,
+    total_words=1000,
+    language: str = "english",
 ):
     return f'"{context}"\n\n{query_prompt}'
 
 
 def generate_outline_report_prompt(
-    question, context, report_source: str, report_format="apa", tone=None,  total_words=1000, language: str = "english"
+    question,
+    context,
+    report_source: str,
+    report_format="apa",
+    tone=None,
+    total_words=1000,
+    language: str = "english",
 ):
     """Generates the outline report prompt for the given question and research summary.
     Args: question (str): The question to generate the outline report prompt for
@@ -209,7 +230,7 @@ def generate_deep_research_prompt(
     report_format="apa",
     tone=None,
     total_words=2000,
-    language: str = "english"
+    language: str = "english",
 ):
     """Generates the deep research report prompt, specialized for handling hierarchical research results.
     Args:
@@ -225,20 +246,20 @@ def generate_deep_research_prompt(
     """
     reference_prompt = ""
     if report_source == ReportSource.Web.value:
-        reference_prompt = f"""
+        reference_prompt = """
 You MUST write all used source urls at the end of the report as references, and make sure to not add duplicated sources, but only one reference for each.
 Every url should be hyperlinked: [url website](url)
-Additionally, you MUST include hyperlinks to the relevant URLs wherever they are referenced in the report: 
+Additionally, you MUST include hyperlinks to the relevant URLs wherever they are referenced in the report:
 
 eg: Author, A. A. (Year, Month Date). Title of web page. Website Name. [url website](url)
 """
     else:
-        reference_prompt = f"""
+        reference_prompt = """
 You MUST write all used source document names at the end of the report as references, and make sure to not add duplicated sources, but only one reference for each."
 """
 
     tone_prompt = f"Write the report in a {tone.value} tone." if tone else ""
-    
+
     return f"""
 Using the following hierarchically researched information and citations:
 
@@ -281,14 +302,14 @@ The server is determined by the field of the topic and the specific name of the 
 
 examples:
 task: "should I invest in apple stocks?"
-response: 
+response:
 {
     "server": "💰 Finance Agent",
     "agent_role_prompt: "You are a seasoned finance analyst AI assistant. Your primary goal is to compose comprehensive, astute, impartial, and methodically arranged financial reports based on provided data and trends."
 }
 task: "could reselling sneakers become profitable?"
-response: 
-{ 
+response:
+{
     "server":  "📈 Business Analyst Agent",
     "agent_role_prompt": "You are an experienced AI business analyst assistant. Your main objective is to produce comprehensive, insightful, impartial, and systematically structured business reports based on provided business data, market trends, and strategic analysis."
 }
@@ -330,7 +351,7 @@ and research data:
 
 {data}
 
-- Construct a list of subtopics which indicate the headers of a report document to be generated on the task. 
+- Construct a list of subtopics which indicate the headers of a report document to be generated on the task.
 - These are a possible list of subtopics : {subtopics}.
 - There should NOT be any duplicate subtopics.
 - Limit the number of subtopics to a maximum of {max_subtopics}
@@ -391,7 +412,7 @@ IMPORTANT:Content and Sections Uniqueness:
 - You MUST include markdown hyperlinks to relevant source URLs wherever referenced in the report, for example:
 
     ### Section Header
-    
+
     This is a sample text. ([url website](url))
 
 - Use H2 for the main subtopic header (##) and H3 for subsections (###).
@@ -420,10 +441,7 @@ Do NOT add a conclusion section.
 
 
 def generate_draft_titles_prompt(
-    current_subtopic: str,
-    main_topic: str,
-    context: str,
-    max_subsections: int = 5
+    current_subtopic: str, main_topic: str, context: str, max_subsections: int = 5
 ) -> str:
     return f"""
 "Context":
@@ -453,8 +471,10 @@ Provide the draft headers in a list format using markdown syntax, for example:
 """
 
 
-def generate_report_introduction(question: str, research_summary: str = "", language: str = "english") -> str:
-    return f"""{research_summary}\n 
+def generate_report_introduction(
+    question: str, research_summary: str = "", language: str = "english"
+) -> str:
+    return f"""{research_summary}\n
 Using the above latest information, Prepare a detailed report introduction on the topic -- {question}.
 - The introduction should be succinct, well-structured, informative with markdown syntax.
 - As this introduction will be part of a larger report, do NOT include any other sections, which are generally present in a report.
@@ -465,7 +485,9 @@ Assume that the current date is {datetime.now(timezone.utc).strftime('%B %d, %Y'
 """
 
 
-def generate_report_conclusion(query: str, report_content: str, language: str = "english") -> str:
+def generate_report_conclusion(
+    query: str, report_content: str, language: str = "english"
+) -> str:
     """
     Generate a concise conclusion summarizing the main findings and implications of a research report.
 
@@ -479,9 +501,9 @@ def generate_report_conclusion(query: str, report_content: str, language: str = 
     """
     prompt = f"""
     Based on the research report below and research task, please write a concise conclusion that summarizes the main findings and their implications:
-    
+
     Research task: {query}
-    
+
     Research Report: {report_content}
 
     Your conclusion should:
@@ -489,8 +511,8 @@ def generate_report_conclusion(query: str, report_content: str, language: str = 
     2. Highlight the most important findings
     3. Discuss any implications or next steps
     4. Be approximately 2-3 paragraphs long
-    
-    If there is no "## Conclusion" section title written at the end of the report, please add it to the top of your conclusion. 
+
+    If there is no "## Conclusion" section title written at the end of the report, please add it to the top of your conclusion.
     You must include hyperlinks with markdown syntax ([url website](url)) related to the sentences wherever necessary.
 
     IMPORTANT: The entire conclusion MUST be written in {language} language.
@@ -523,4 +545,3 @@ def get_prompt_by_report_type(report_type):
         )
         prompt_by_type = report_type_mapping.get(default_report_type)
     return prompt_by_type
-

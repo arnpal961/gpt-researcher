@@ -1,5 +1,4 @@
-import asyncio
-from typing import List, Dict, Any
+from typing import List
 from ..config.config import Config
 from ..utils.llm import create_chat_completion
 from ..utils.logger import get_formatted_logger
@@ -20,7 +19,7 @@ async def write_report_introduction(
     agent_role_prompt: str,
     config: Config,
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> str:
     """
     Generate an introduction for the report.
@@ -41,11 +40,14 @@ async def write_report_introduction(
             model=config.smart_llm_model,
             messages=[
                 {"role": "system", "content": f"{agent_role_prompt}"},
-                {"role": "user", "content": generate_report_introduction(
-                    question=query,
-                    research_summary=context,
-                    language=config.language
-                )},
+                {
+                    "role": "user",
+                    "content": generate_report_introduction(
+                        question=query,
+                        research_summary=context,
+                        language=config.language,
+                    ),
+                },
             ],
             temperature=0.25,
             llm_provider=config.smart_llm_provider,
@@ -67,7 +69,7 @@ async def write_conclusion(
     agent_role_prompt: str,
     config: Config,
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> str:
     """
     Write a conclusion for the report.
@@ -88,9 +90,12 @@ async def write_conclusion(
             model=config.smart_llm_model,
             messages=[
                 {"role": "system", "content": f"{agent_role_prompt}"},
-                {"role": "user", "content": generate_report_conclusion(query=query,
-                                                                       report_content=context,
-                                                                       language=config.language)},
+                {
+                    "role": "user",
+                    "content": generate_report_conclusion(
+                        query=query, report_content=context, language=config.language
+                    ),
+                },
             ],
             temperature=0.25,
             llm_provider=config.smart_llm_provider,
@@ -112,7 +117,7 @@ async def summarize_url(
     role: str,
     config: Config,
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> str:
     """
     Summarize the content of a URL.
@@ -133,7 +138,10 @@ async def summarize_url(
             model=config.smart_llm_model,
             messages=[
                 {"role": "system", "content": f"{role}"},
-                {"role": "user", "content": f"Summarize the following content from {url}:\n\n{content}"},
+                {
+                    "role": "user",
+                    "content": f"Summarize the following content from {url}:\n\n{content}",
+                },
             ],
             temperature=0.25,
             llm_provider=config.smart_llm_provider,
@@ -156,7 +164,7 @@ async def generate_draft_section_titles(
     role: str,
     config: Config,
     websocket=None,
-    cost_callback: callable = None
+    cost_callback: callable = None,
 ) -> List[str]:
     """
     Generate draft section titles for the report.
@@ -177,8 +185,12 @@ async def generate_draft_section_titles(
             model=config.smart_llm_model,
             messages=[
                 {"role": "system", "content": f"{role}"},
-                {"role": "user", "content": generate_draft_titles_prompt(
-                    current_subtopic, query, context)},
+                {
+                    "role": "user",
+                    "content": generate_draft_titles_prompt(
+                        current_subtopic, query, context
+                    ),
+                },
             ],
             temperature=0.25,
             llm_provider=config.smart_llm_provider,
@@ -232,9 +244,29 @@ async def generate_report(
     report = ""
 
     if report_type == "subtopic_report":
-        content = f"{generate_prompt(query, existing_headers, relevant_written_contents, main_topic, context, report_format=cfg.report_format, tone=tone, total_words=cfg.total_words, language=cfg.language)}"
+        _content = generate_prompt(
+            query,
+            existing_headers,
+            relevant_written_contents,
+            main_topic,
+            context,
+            report_format=cfg.report_format,
+            tone=tone,
+            total_words=cfg.total_words,
+            language=cfg.language,
+        )
     else:
-        content = f"{generate_prompt(query, context, report_source, report_format=cfg.report_format, tone=tone, total_words=cfg.total_words, language=cfg.language)}"
+        _content = generate_prompt(
+            query,
+            context,
+            report_source,
+            report_format=cfg.report_format,
+            tone=tone,
+            total_words=cfg.total_words,
+            language=cfg.language,
+        )
+
+    content = f"{_content}"
     try:
         report = await create_chat_completion(
             model=cfg.smart_llm_model,
@@ -250,7 +282,8 @@ async def generate_report(
             llm_kwargs=cfg.llm_kwargs,
             cost_callback=cost_callback,
         )
-    except:
+    except Exception as e:
+        print(f"Error in generate_report: {e}")
         try:
             report = await create_chat_completion(
                 model=cfg.smart_llm_model,

@@ -72,7 +72,7 @@ class PubMedCentralSearch:
                     search_response.append(
                         {
                             "href": f"https://www.ncbi.nlm.nih.gov/pmc/articles/PMC{article_id}/",
-                            "body": f"{article_data['title']}\n\n{article_data['abstract']}\n\n{article_data['body'][:500]}...",
+                            "body": f"{article_data['title']}\n\n{article_data['abstract']}\n\n{article_data['body'][:500]}...",  # Limit body to 500 characters  # noqa: E501
                         }
                     )
 

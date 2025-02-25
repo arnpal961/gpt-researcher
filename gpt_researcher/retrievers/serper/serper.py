@@ -29,7 +29,7 @@ class SerperSearch():
         """
         try:
             api_key = os.environ["SERPER_API_KEY"]
-        except:
+        except KeyError:
             raise Exception("Serper API key not found. Please set the SERPER_API_KEY environment variable. "
                             "You can get a key at https://serper.dev/")
         return api_key

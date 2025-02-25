@@ -9,26 +9,26 @@ logs_dir.mkdir(exist_ok=True)
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     handlers=[
         # File handler for general application logs
-        logging.FileHandler('logs/app.log'),
+        logging.FileHandler("logs/app.log"),
         # Stream handler for console output
-        logging.StreamHandler()
-    ]
+        logging.StreamHandler(),
+    ],
 )
 
 # Suppress verbose fontTools logging
-logging.getLogger('fontTools').setLevel(logging.WARNING)
-logging.getLogger('fontTools.subset').setLevel(logging.WARNING)
-logging.getLogger('fontTools.ttLib').setLevel(logging.WARNING)
+logging.getLogger("fontTools").setLevel(logging.WARNING)
+logging.getLogger("fontTools.subset").setLevel(logging.WARNING)
+logging.getLogger("fontTools.ttLib").setLevel(logging.WARNING)
 
 # Create logger instance
 logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-from backend.server.server import app
+from backend.server.server import app  # noqa
 
 if __name__ == "__main__":
     import uvicorn

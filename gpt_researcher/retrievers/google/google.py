@@ -19,8 +19,8 @@ class GoogleSearch:
         self.query = query
         self.headers = headers or {}
         self.query_domains = query_domains or None
-        self.api_key = self.headers.get("google_api_key") or self.get_api_key()  # Use the passed api_key or fallback to environment variable
-        self.cx_key = self.headers.get("google_cx_key") or self.get_cx_key()  # Use the passed cx_key or fallback to environment variable
+        self.api_key = self.headers.get("google_api_key") or self.get_api_key()  # Use the passed api_key or fallback to environment variable  # noqa E501
+        self.cx_key = self.headers.get("google_cx_key") or self.get_cx_key()  # Use the passed cx_key or fallback to environment variable  # noqa E501
 
     def get_api_key(self):
         """
@@ -31,7 +31,7 @@ class GoogleSearch:
         # Get the API key
         try:
             api_key = os.environ["GOOGLE_API_KEY"]
-        except:
+        except KeyError:
             raise Exception("Google API key not found. Please set the GOOGLE_API_KEY environment variable. "
                             "You can get a key at https://developers.google.com/custom-search/v1/overview")
         return api_key
@@ -45,7 +45,7 @@ class GoogleSearch:
         # Get the API key
         try:
             api_key = os.environ["GOOGLE_CX_KEY"]
-        except:
+        except KeyError:
             raise Exception("Google CX key not found. Please set the GOOGLE_CX_KEY environment variable. "
                             "You can get a key at https://developers.google.com/custom-search/v1/overview")
         return api_key
@@ -93,7 +93,8 @@ class GoogleSearch:
                     "href": result["link"],
                     "body": result["snippet"],
                 }
-            except:
+            except KeyError:
+                # Skip results that are missing required fields
                 continue
             search_results.append(search_result)
 

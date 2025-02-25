@@ -1,5 +1,4 @@
-from typing import List, Type
-from ..config.config import Config
+
 
 def get_retriever(retriever):
     """

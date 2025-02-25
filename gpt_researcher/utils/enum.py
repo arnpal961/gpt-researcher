@@ -38,7 +38,7 @@ class Tone(Enum):
         "Descriptive (detailed depiction of phenomena, experiments, or case studies)"
     )
     Critical = "Critical (judging the validity and relevance of the research and its conclusions)"
-    Comparative = "Comparative (juxtaposing different theories, data, or methods to highlight differences and similarities)"
+    Comparative = "Comparative (juxtaposing different theories, data, or methods to highlight differences and similarities)"  # noqa: E501
     Speculative = "Speculative (exploring hypotheses and potential implications or future research directions)"
     Reflective = "Reflective (considering the research process and personal insights or experiences)"
     Narrative = (
