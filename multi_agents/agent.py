@@ -7,7 +7,7 @@ chief_editor = ChiefEditorAgent({
   "model": "gpt-4o",
   "guidelines": [
     "The report MUST be written in APA format",
-    "Each sub section MUST include supporting sources using hyperlinks. If none exist, erase the sub section or rewrite it to be a part of the previous section",
+    "Each sub section MUST include supporting sources using hyperlinks. If none exist, erase the sub section or rewrite it to be a part of the previous section",  # noqa
     "The report MUST be written in spanish"
   ],
   "verbose": False
