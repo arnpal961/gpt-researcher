@@ -52,7 +52,7 @@ class BrowserManager:
             await stream_output(
                 "logs",
                 "scraping_complete",
-                f"🌐 Scraping complete",
+                "🌐 Scraping complete",
                 self.researcher.websocket,
             )
 

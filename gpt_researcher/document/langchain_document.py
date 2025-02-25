@@ -1,8 +1,6 @@
-import asyncio
-import os
+from typing import List, Dict
 
 from langchain_core.documents import Document
-from typing import List, Dict
 
 
 # Supports the base Document class from langchain

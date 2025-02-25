@@ -1,8 +1,7 @@
-import json
 import os
-from typing import Dict, List
+import logging
 
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, File, UploadFile, Header
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,15 +9,11 @@ from pydantic import BaseModel
 
 from backend.server.websocket_manager import WebSocketManager
 from backend.server.server_utils import (
-    get_config_dict,
-    update_environment_variables, handle_file_upload, handle_file_deletion,
-    execute_multi_agents, handle_websocket_communication
+    handle_file_upload,
+    handle_file_deletion,
+    execute_multi_agents,
+    handle_websocket_communication
 )
-
-
-from gpt_researcher.utils.logging_config import setup_research_logging
-
-import logging
 
 # Get logger instance
 logger = logging.getLogger(__name__)
@@ -76,7 +71,8 @@ manager = WebSocketManager()
 # Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000",
+                   "http://localhost:3001"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -93,7 +89,6 @@ def startup_event():
     os.makedirs("outputs", exist_ok=True)
     app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
     os.makedirs(DOC_PATH, exist_ok=True)
-    
 
 # Routes
 

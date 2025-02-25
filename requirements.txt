@@ -28,7 +28,9 @@ unstructured
 json_repair
 json5
 loguru
-
+tavily-python
+selenium
+browser-cookie3
 # uncomment for testing
 # pytest
 # pytest-asyncio

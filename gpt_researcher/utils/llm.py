@@ -1,12 +1,9 @@
 # libraries
-from __future__ import annotations
 
-import json
+import os
 import logging
 from typing import Optional, Any, Dict
 
-from colorama import Fore, Style
-import os
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
 
@@ -116,6 +113,7 @@ async def construct_subtopics(task: str, data: str, config, subtopics: list = []
         }
 
         temperature = config.temperature
+        print("Temperature : ", temperature)
         if 'o3' in config.smart_llm_model or 'o1' in config.smart_llm_model:
             kwargs['reasoning_effort'] = "high"
         else:

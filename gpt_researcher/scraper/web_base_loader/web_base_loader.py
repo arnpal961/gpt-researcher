@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 import requests
 from ..utils import get_relevant_images, extract_title
+
 
 class WebBaseLoaderScraper:
 
@@ -13,7 +13,7 @@ class WebBaseLoaderScraper:
         """
         This Python function scrapes content from a webpage using a WebBaseLoader object and returns the
         concatenated page content.
-        
+
         Returns:
           The `scrape` method is returning a string variable named `content` which contains the
         concatenated page content from the documents loaded by the `WebBaseLoader`. If an exception
@@ -21,6 +21,7 @@ class WebBaseLoaderScraper:
         """
         try:
             from langchain_community.document_loaders import WebBaseLoader
+
             loader = WebBaseLoader(self.link)
             loader.requests_kwargs = {"verify": False}
             docs = loader.load()
@@ -30,9 +31,9 @@ class WebBaseLoaderScraper:
                 content += doc.page_content
 
             response = self.session.get(self.link)
-            soup = BeautifulSoup(response.content, 'html.parser')
+            soup = BeautifulSoup(response.content, "html.parser")
             image_urls = get_relevant_images(soup, self.link)
-            
+
             # Extract the title using the utility function
             title = extract_title(soup)
 

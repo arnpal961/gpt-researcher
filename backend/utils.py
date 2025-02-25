@@ -2,6 +2,7 @@ import aiofiles
 import urllib
 import mistune
 
+
 async def write_to_file(filename: str, text: str) -> None:
     """Asynchronously write text to a file in UTF-8 encoding.
 
@@ -19,6 +20,7 @@ async def write_to_file(filename: str, text: str) -> None:
     async with aiofiles.open(filename, "w", encoding='utf-8') as file:
         await file.write(text_utf8)
 
+
 async def write_text_to_md(text: str, filename: str = "") -> str:
     """Writes text to a Markdown file and returns the file path.
 
@@ -31,6 +33,7 @@ async def write_text_to_md(text: str, filename: str = "") -> str:
     file_path = f"outputs/{filename[:60]}.md"
     await write_to_file(file_path, text)
     return urllib.parse.quote(file_path)
+
 
 async def write_md_to_pdf(text: str, filename: str = "") -> str:
     """Converts Markdown text to a PDF file and returns the file path.
@@ -57,6 +60,7 @@ async def write_md_to_pdf(text: str, filename: str = "") -> str:
 
     encoded_file_path = urllib.parse.quote(file_path)
     return encoded_file_path
+
 
 async def write_md_to_word(text: str, filename: str = "") -> str:
     """Converts Markdown text to a DOCX file and returns the file path.

@@ -6,6 +6,7 @@ from ..utils.logger import get_formatted_logger
 
 logger = get_formatted_logger()
 
+
 def scrape_urls(urls, cfg=None) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     """
     Scrapes the urls
@@ -29,12 +30,13 @@ def scrape_urls(urls, cfg=None) -> Tuple[List[Dict[str, Any]], List[Dict[str, An
         scraper = Scraper(urls, user_agent, cfg.scraper)
         scraped_data = scraper.run()
         for item in scraped_data:
-            if 'image_urls' in item:
-                images.extend([img for img in item['image_urls']])
+            if "image_urls" in item:
+                images.extend([img for img in item["image_urls"]])
     except Exception as e:
         print(f"{Fore.RED}Error in scrape_urls: {e}{Style.RESET_ALL}")
 
     return scraped_data, images
+
 
 async def filter_urls(urls: List[str], config: Config) -> List[str]:
     """
@@ -55,6 +57,7 @@ async def filter_urls(urls: List[str], config: Config) -> List[str]:
             filtered_urls.append(url)
     return filtered_urls
 
+
 async def extract_main_content(html_content: str) -> str:
     """
     Extract the main content from HTML.
@@ -70,7 +73,10 @@ async def extract_main_content(html_content: str) -> str:
     # For now, we'll just return the raw HTML as a placeholder
     return html_content
 
-async def process_scraped_data(scraped_data: List[Dict[str, Any]], config: Config) -> List[Dict[str, Any]]:
+
+async def process_scraped_data(
+    scraped_data: List[Dict[str, Any]], config: Config
+) -> List[Dict[str, Any]]:
     """
     Process the scraped data to extract and clean the main content.
 
@@ -83,13 +89,11 @@ async def process_scraped_data(scraped_data: List[Dict[str, Any]], config: Confi
     """
     processed_data = []
     for item in scraped_data:
-        if item['status'] == 'success':
-            main_content = await extract_main_content(item['content'])
-            processed_data.append({
-                'url': item['url'],
-                'content': main_content,
-                'status': 'success'
-            })
+        if item["status"] == "success":
+            main_content = await extract_main_content(item["content"])
+            processed_data.append(
+                {"url": item["url"], "content": main_content, "status": "success"}
+            )
         else:
             processed_data.append(item)
     return processed_data
