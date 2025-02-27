@@ -35,7 +35,7 @@ async def call_model(
             try:
                 cleaned_json_string = response.strip("```json\n")
                 return json.loads(cleaned_json_string)
-            except Exception as e:
+            except Exception:
                 print("⚠️ Error in reading JSON, attempting to repair JSON")
                 logger.error(
                     f"Error in reading JSON, attempting to repair reponse: {response}"
